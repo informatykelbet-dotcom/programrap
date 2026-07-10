@@ -1,7 +1,14 @@
+"""
+=========================================================
+Generator Raportu Nieobecności
+Plik główny programu
+=========================================================
+"""
+
+import threading
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from pathlib import Path
-import threading
 
 from report_engine import ReportEngine
 
@@ -16,12 +23,22 @@ class App:
         self.window.geometry("700x220")
         self.window.resizable(False, False)
 
+        # ---------------------------------------
+        # Zmienne
+        # ---------------------------------------
+
         self.folder = tk.StringVar()
         self.status = tk.StringVar(value="Gotowy")
 
+        # ---------------------------------------
+        # Budowa okna
+        # ---------------------------------------
+
         self.create_widgets()
 
-        self.window.mainloop()
+    # =====================================================
+    # Budowa interfejsu
+    # =====================================================
 
     def create_widgets(self):
 
@@ -36,12 +53,10 @@ class App:
         row = ttk.Frame(frame)
         row.pack(fill="x", pady=5)
 
-        self.entry = ttk.Entry(
+        ttk.Entry(
             row,
             textvariable=self.folder
-        )
-
-        self.entry.pack(
+        ).pack(
             side="left",
             fill="x",
             expand=True
@@ -57,20 +72,25 @@ class App:
             frame,
             text="Generuj raport",
             command=self.start
-        ).pack(pady=15)
+        ).pack(pady=10)
 
         self.progress = ttk.Progressbar(
             frame,
+            orient="horizontal",
             mode="determinate",
-            length=600
+            maximum=100
         )
 
-        self.progress.pack()
+        self.progress.pack(fill="x")
 
         ttk.Label(
             frame,
             textvariable=self.status
         ).pack(anchor="w", pady=10)
+
+    # =====================================================
+    # Wybór folderu
+    # =====================================================
 
     def choose_folder(self):
 
@@ -79,48 +99,95 @@ class App:
         if folder:
             self.folder.set(folder)
 
+    # =====================================================
+    # Aktualizacja paska postępu
+    # =====================================================
+
+    def update_progress(self, value):
+
+        self.window.after(
+            0,
+            lambda: self.progress.configure(value=value)
+        )
+
+    # =====================================================
+    # Aktualizacja statusu
+    # =====================================================
+
+    def update_status(self, text):
+
+        self.window.after(
+            0,
+            lambda: self.status.set(text)
+        )
+
+    # =====================================================
+    # Start programu
+    # =====================================================
+
     def start(self):
 
-        folder = self.folder.get()
-
-        if not folder:
+        if not self.folder.get():
 
             messagebox.showwarning(
-                "Uwaga",
-                "Wybierz folder."
+                "Brak folderu",
+                "Wybierz folder z kartami pracy."
             )
 
             return
 
         threading.Thread(
-            target=self.generate,
+            target=self.generate_report,
             daemon=True
         ).start()
 
-    def generate(self):
+    # =====================================================
+    # Generowanie raportu
+    # =====================================================
+
+    def generate_report(self):
 
         try:
 
             engine = ReportEngine(
-                Path(self.folder.get()),
-                self.progress,
-                self.status
+                folder=Path(self.folder.get()),
+                progress_callback=self.update_progress,
+                status_callback=self.update_status
             )
 
-            engine.run()
+            report = engine.run()
 
-            messagebox.showinfo(
-                "Gotowe",
-                "Raport został wygenerowany."
+            self.window.after(
+                0,
+                lambda: messagebox.showinfo(
+                    "Gotowe",
+                    f"Raport zapisano:\n\n{report}"
+                )
             )
 
         except Exception as e:
 
-            messagebox.showerror(
-                "Błąd",
-                str(e)
+            self.window.after(
+                0,
+                lambda: messagebox.showerror(
+                    "Błąd",
+                    str(e)
+                )
             )
 
+    # =====================================================
+    # Uruchomienie programu
+    # =====================================================
+
+    def run(self):
+
+        self.window.mainloop()
+
+
+# =========================================================
+# Start programu
+# =========================================================
 
 if __name__ == "__main__":
-    App()
+
+    App().run()
