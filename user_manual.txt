@@ -1,0 +1,4 @@
+Klikasz przeglądaj, 
+wybierasz ścieżke gdzie masz pliki excela do rozliczeń. 
+Klikasz generuj. 
+Po zakończeniu działania programu (właściwym) program wygeneruje ci plik raportu w tym samym folderze. 

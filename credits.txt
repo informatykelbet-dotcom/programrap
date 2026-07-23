@@ -1,0 +1,6 @@
+Program Generator Raportów 
+program generator raportów wersja 1.0 powstał w lipcu 2026 roku 
+autorami są: Karol Toborek oraz ChatGPT. 
+język programowania: python 
+stworzono dla: Elbet sp z o.o. 
+Ma obliczać dni nieobecności (i je wyświetlać) z odpowiednich plików kadrowych w formacie xls

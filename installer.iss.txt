@@ -1,0 +1,92 @@
+ =====================================================
+; INSTALATOR GENERATORA RAPORTU
+; =====================================================
+
+
+#define MyAppName "Generator Raportu"
+#define MyAppVersion "1.0.0"
+#define MyAppPublisher "Generator Raportu"
+#define MyAppExeName "GeneratorRaportu.exe"
+
+
+; =====================================================
+; INFORMACJE O INSTALATORZE
+; =====================================================
+
+[Setup]
+
+; Unikalny identyfikator aplikacji
+AppId={{A9F4E8D1-7B52-4D62-9A83-1F6C7B4E2D90}}
+
+; Nazwa programu
+AppName={#MyAppName}
+
+; Wersja programu
+AppVersion={#MyAppVersion}
+
+; Producent
+AppPublisher={#MyAppPublisher}
+
+; Folder instalacji
+DefaultDirName={autopf}\GeneratorRaportu
+
+; Nazwa pliku instalatora
+OutputBaseFilename=GeneratorRaportu-Setup
+
+; Folder wyjściowy instalatora
+OutputDir=installer
+
+; Ikona instalatora i programu
+SetupIconFile=GeneratorRaportu.ico
+
+; Program 64-bitowy
+ArchitecturesInstallIn64BitMode=x64
+
+; Nie wymagamy uprawnień administratora
+PrivilegesRequired=lowest
+
+; Kompresja
+Compression=lzma
+
+; Solid compression
+SolidCompression=yes
+
+; Wygląd nowoczesnego instalatora
+WizardStyle=modern
+
+
+; =====================================================
+; PLIKI PROGRAMU
+; =====================================================
+
+[Files]
+
+; Główny plik programu
+Source: "dist\GeneratorRaportu.exe"; DestDir: "{app}"; Flags: ignoreversion
+
+
+; =====================================================
+; SKRÓTY
+; =====================================================
+
+[Icons]
+
+; Skrót na pulpicie
+Name: "{autodesktop}\Generator Raportu"; \
+    Filename: "{app}\{#MyAppExeName}"; \
+    IconFilename: "{app}\{#MyAppExeName}"
+
+; Skrót w Menu Start
+Name: "{autoprograms}\Generator Raportu"; \
+    Filename: "{app}\{#MyAppExeName}"; \
+    IconFilename: "{app}\{#MyAppExeName}"
+
+
+; =====================================================
+; ODINSTALOWANIE
+; =====================================================
+
+[UninstallDelete]
+
+; Usuwa pliki programu podczas odinstalowania
+Type: filesandordirs; Name: "{app}"

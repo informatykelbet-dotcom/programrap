@@ -4,7 +4,7 @@ Generator Raportu Nieobecności
 Silnik programu
 =========================================================
 
-Autor: ChatGPT + Użytkownik
+Autor: ChatGPT + Karol Toborek
 Wersja: 1.0
 """
 
@@ -13,7 +13,7 @@ from openpyxl import load_workbook, Workbook
 from datetime import date, datetime, timedelta
 import calendar
 import re
-
+import holidays
 
 class ReportEngine:
     """
@@ -304,6 +304,31 @@ class ReportEngine:
                 absent_days.append(day)
 
         return absent_days, saturday_days
+# =====================================================
+    # Usuwanie świąt z listy nieobecności
+    # =====================================================
+
+    def filter_holidays(self, absent_days):
+        """
+        Usuwa z listy nieobecności święta ustawowo wolne od pracy.
+        """
+
+        pl_holidays = holidays.Poland(years=self.report_year)
+
+        filtered = []
+
+        for day in absent_days:
+
+            current_day = date(
+                self.report_year,
+                self.report_month,
+                day
+            )
+
+            if current_day not in pl_holidays:
+                filtered.append(day)
+
+        return filtered
 
 # =====================================================
     # Tworzenie raportu Excel
@@ -400,6 +425,7 @@ class ReportEngine:
 
         return report_path
 
+
     # =====================================================
     # Główna funkcja programu
     # =====================================================
@@ -440,15 +466,18 @@ class ReportEngine:
 
             absent, saturdays = self.analyse_employee(attendance)
 
+            # Usuwamy święta z listy nieobecności
+            absent = self.filter_holidays(absent)
+
             self.results.append({
 
-                "employee": employee,
+            "employee": employee,
 
-                "absent": absent,
+             "absent": absent,
 
                 "saturdays": saturdays
 
-            })
+                })
 
             progress = int(index / total * 100)
 
