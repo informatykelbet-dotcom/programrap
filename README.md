@@ -1,2 +1,0 @@
-# programrap
-Program tworzący raporty
